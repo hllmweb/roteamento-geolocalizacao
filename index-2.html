@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+      
+        #map {
+          height: 100%;
+        }
+        
+        html, body {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+        }
+        
+      </style>
+</head>
+<body>
+    <div id="map"></div>
+
+
+
+
+    <script>
+var addresses = [
+    ['Tv. Cervo, 93 - Tarumã, Manaus - AM, 69023-045', 'R. Matupiris - Santa Etelvina, Manaus - AM'],
+  
+  ];
+
+
+        function initMap() {
+            var directionsDisplay = new google.maps.DirectionsRenderer;
+            
+            /*
+            --  MUDA A COR DA POLYLINE -> var directionsDisplay = new google.maps.DirectionsRenderer({ polylineOptions: { strokeColor: "blue" } });
+            */
+            
+            var directionsService = new google.maps.DirectionsService;        
+            var map = new google.maps.Map(document.getElementById('map'), {
+                disableDefaultUI: true,
+                zoom: 14,
+                zoomControl: false,
+                scaleControl: false,
+                durationInTraffic: true,
+                streetViewControl: false,
+                suppressMarkers: true,
+
+                center: {lat: -23.565, lng: -46.652} // Paulista
+            });
+            
+            directionsDisplay.setMap(map);
+            calculateAndDisplayRoute(directionsService, directionsDisplay);
+            
+            //var trafficLayer = new google.maps.TrafficLayer();
+            //trafficLayer.setMap(map);
+        
+            var noPoi = [
+            {
+                featureType: "poi",
+                stylers: [
+                { visibility: "off" }
+                ]   
+            }
+            ];
+            map.setOptions({styles: noPoi});
+            
+        }
+
+        function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+        
+            directionsService.route({
+            origin: {lat: -23.5711798, lng: -46.644276},  // Paulista inicia.
+            destination: {lat: -23.5617981, lng: -46.6560076},  // Paulista final.
+            travelMode: google.maps.DirectionsTravelMode.DRIVING
+        
+            },function(response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setOptions({ preserveViewport: true });
+                    directionsDisplay.setDirections(response);
+                } else {
+                    window.alert('Directions request failed due to ' + status);
+                }
+            });
+        }
+
+
+        
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap">
+    </script>
+</body>
+</html>

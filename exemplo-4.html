@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<meta charset="utf-8">
+<title>Rota com multiplos pontos</title>
+<style>
+html, body, #map-canvas {
+height: 100%;
+margin: 0px;
+padding: 0px
+}
+#panel {
+position: absolute;
+top: 5px;
+left: 50%;
+;
+z-index: 5;
+background-color: #fff;
+padding: 5px;
+border: 1px solid #999;
+}
+</style>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&sensor=false"></script>
+
+<script>
+var directionsDisplay;
+var directionsService = new google.maps.DirectionsService();
+var map;
+
+function load() {
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    var caragua = new google.maps.LatLng(-23.257209,-45.946624);
+    var mapOptions = {
+        zoom: 10,
+        center: caragua
+    }
+    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    directionsDisplay.setMap(map);
+}
+
+
+function calcRoute() {
+    var start = document.getElementById('start').value;
+    var end = document.getElementById('end').value;
+    var waypts = [];
+    var checkboxArray = document.getElementById('waypoints');
+for (var i = 0; i < checkboxArray.length; i++) {
+    if (checkboxArray.options.selected == true) {
+        waypts.push({
+        location:checkboxArray.value,
+        stopover:true});
+    }
+}
+
+
+var request = {
+    origin: start,
+    destination: end,
+    waypoints: waypts,
+    optimizeWaypoints: true,
+    travelMode: google.maps.TravelMode.DRIVING
+};
+directionsService.route(request, function(response, status) {
+if (status == google.maps.DirectionsStatus.OK) {
+directionsDisplay.setDirections(response);
+var route = response.routes[0];
+var summaryPanel = document.getElementById('directions_panel');
+summaryPanel.innerHTML = '';
+for (var i = 0; i < route.legs.length; i++) {
+var routeSegment = i + 1;
+summaryPanel.innerHTML += '<b>Rota - Trecho: ' + routeSegment + '</b><br> de: ';
+summaryPanel.innerHTML += route.legs.start_address + ' ate ';
+summaryPanel.innerHTML += route.legs.end_address + '<br>';
+summaryPanel.innerHTML += route.legs.distance.text + '<br><br>';
+}
+}
+});
+}
+google.maps.event.addDomListener(window, 'load', load);
+</script>
+</head>
+<body>
+<div id="map-canvas" style="float:left;width:70%;height:100%;"></div>
+<div id="control_panel" style="float:right;width:30%;text-align:left;padding-top:20px">
+<div style="margin:20px;border-width:2px;">
+<b>Inicio:</b>
+<select id="start">
+<option value="caraguatatuba, sp">Caragua</option>
+</select>
+<br>
+<b>demais pontos - Waypoints:</b> <br>
+<i>(Ctrl-Click para multiplas selecao)</i> <br>
+<select multiple id="waypoints">
+<option value="ubatuba, sp">Ubatuba, sp</option>
+<option value="taubate, sp">Taubate</option>
+<option value="santos, sp">Santos</option>
+<option value="sao sebastiao, sp">Sseb</option>
+</select>
+<br>
+<b>Fim:</b>
+<select id="end">
+<option value="sao paulo, sp">SP</option>
+</select>
+<br>
+<input type="submit" onclick="calcRoute();">
+</div>
+<div id="directions_panel" style="margin:20px;background-color:#FFEE77;"></div>
+</div>
+</body>
+</html>

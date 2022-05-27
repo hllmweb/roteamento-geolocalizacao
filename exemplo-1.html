@@ -59,7 +59,7 @@
             
                 directionsService.route(request, function(result, status) {
                     if (status == "OK") {
-                    directionsDisplay.setDirections(result);
+                        directionsDisplay.setDirections(result);
                     }
                 });
             }
@@ -88,7 +88,7 @@
 
 
             calculateRoute(mapOrigin1, mapDestination1);
-            calculateRoute(mapOrigin1, mapDestination2);
+            //calculateRoute(mapOrigin1, mapDestination2);
 
             calculaDistancia(mapOrigin1, mapDestination1);
             calculaDistancia(mapOrigin1, mapDestination2);
