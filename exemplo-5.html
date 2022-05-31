@@ -2,7 +2,7 @@
 
 <html>
   <head>
-    <title>Waypoints in Directions</title>
+    <title></title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 
     <style>
@@ -12,30 +12,47 @@
           padding: 0;
         }
         #container {
-        height: 100%;
-        display: flex;
+          height: 100%;
+          display: flex;
         }
 
         #sidebar {
-        flex-basis: 15rem;
-        flex-grow: 1;
-        padding: 1rem;
-        max-width: 30rem;
-        height: 100%;
-        box-sizing: border-box;
-        overflow: auto;
+          flex-basis: 15rem;
+          flex-grow: 1;
+          padding: 1rem;
+          max-width: 30rem;
+          height: 100%;
+          box-sizing: border-box;
+          overflow: auto;
         }
 
         #map {
-        flex-basis: 0;
-        flex-grow: 4;
-        height: 100%;
+          flex-basis: 0;
+          flex-grow: 4;
+          height: 100%;
         }
 
         #directions-panel {
-        margin-top: 10px;
+          margin-top: 10px;
         }
-
+        #submit{
+          display: block;
+          width: 100%;
+          margin: 20px 0;
+          background-color: transparent;
+          border:1px solid #1b9400;
+          padding:20px 0;
+          border-radius:10px;
+          color:#1b9400;
+          font-weight: bold;
+          font-size:16px;
+          cursor:pointer;
+        }
+        #submit:hover{
+          color:#FFF;
+          background-color: #1b9400;
+         
+        }
     </style>
   </head>
   <body>
@@ -43,23 +60,23 @@
       <div id="map"></div>
       <div id="sidebar">
         <div>
-          <b>Start:</b>
+          <b>Origem:</b>
           <select id="start">
-            <option value="Caraguatatuba, SP">Caragua</option>
+            <option value="Av. Torquato Tapajós, 9250 - Colônia Terra Nova, Manaus - AM, 69093-415">Hospital Delphina Rinaldi Abdel Aziz</option>
           </select>
-          <br />
-          <b>Waypoints:</b> <br />
-          <i>(Ctrl+Click or Cmd+Click for multiple selection)</i> <br />
+         
+          <h3>Lista de Pacientes para Atendimento</h3> 
           <select multiple id="waypoints">
-            <option value="ubatuba, sp">Ubatuba, sp</option>
-            <option value="taubate, sp">Taubate</option>
-            <option value="santos, sp">Santos</option>
-            <option value="sao sebastiao, sp">Sseb</option>
+            <option value="Rua peixe Cavalo, número 29A - Tarumã Açu, Manaus - AM, 69023-022">Atendimento #01</option>
+            <option value="Av. Saíra Amarela, 11265 - Tarumã Açu, Manaus - AM, 69023-250">Atendimento #02</option>
+            <option value="R. Piquiá, 273 - Santa Etelvina, Manaus - AM, 69059-148">Atendimento #03</option>
+            <option value="R. Mangueiras, 02 - Santa Etelvina, Manaus - AM, 69017-123">Atendimento #04</option>
           </select>
           <br />
-          <b>End:</b>
+          <br />
+          <b>Destino:</b>
           <select id="end">
-            <option value="Sao Paulo, SP">SP</option>
+            <option value="Av. Torquato Tapajós, 9250 - Colônia Terra Nova, Manaus - AM, 69093-415">Hospital Delphina Rinaldi Abdel Aziz</option>
           </select>
           <br />
           <input type="submit" id="submit" />
@@ -71,15 +88,14 @@
 
 
 
-
     
     <script>
         function initMap() {
           const directionsService = new google.maps.DirectionsService();
           const directionsRenderer = new google.maps.DirectionsRenderer();
           const map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 6,
-            center: { lat: -23.257209, lng: -45.946624},
+            zoom: 12,
+            center: { lat: -2.9783237590461202, lng: -60.02136746735784},
           });
         
           directionsRenderer.setMap(map);
@@ -114,21 +130,40 @@
         
               const route = response.routes[0];
               const summaryPanel = document.getElementById("directions-panel");
-        
+              var menor = 0;
               summaryPanel.innerHTML = "";
-        
-              // For each route, display summary information.
+              /*keysSorted = Object.keys(route.legs).sort(function(a,b){return route[a]-route[b]});
+              console.log(keysSorted[0]);*/
+              
+              // console.log(typeof route)
+
               for (let i = 0; i < route.legs.length; i++) {
                 const routeSegment = i + 1;
-        
+                const arrayduracao = route.legs[i].duration.text.split(" ");
+                //console.log(arrayduracao[0]);
+
+                let edad = route.legs.sort((a, b) => {
+                  //return a.duration.text > b.duration.text;
+                  const duracao_a = a.duration.text.split(" ");
+                  const duracao_b = b.duration.text.split(" ");
+
+                  return duracao_a[0] > duracao_b[0];
+                });
+                console.log(edad); 
+
+                
+
                 summaryPanel.innerHTML +=
-                  "<b>Route Segment: " + routeSegment + "</b><br>";
-                summaryPanel.innerHTML += route.legs[i].start_address + " to ";
+                  "<b>Rota: " + routeSegment + "</b><br>";
+                summaryPanel.innerHTML += "<strong>De </strong>"+route.legs[i].start_address + " <br><strong>para</strong> ";
                 summaryPanel.innerHTML += route.legs[i].end_address + "<br>";
-                summaryPanel.innerHTML += route.legs[i].distance.text + "<br><br>";
+                summaryPanel.innerHTML += route.legs[i].distance.text + "<br>";
+                summaryPanel.innerHTML += route.legs[i].duration.text + "<br><br>";
+               
+
               }
             })
-            .catch((e) => window.alert("Directions request failed due to " + status));
+            .catch((e) => window.alert("Falha na conexão " + status));
         }
         
         window.initMap = initMap;
